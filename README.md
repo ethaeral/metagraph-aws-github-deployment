@@ -16,7 +16,8 @@ Quick start up for a github development to aws production CI/CD enviroment of **
 
 [Getting started](#getting-started) •
 [Installation](#installation) •
-[Development Tools](#development-tools)
+[Development Tools](#development-tools) •
+[Resources](#Resources)
 
 
 <hr>
@@ -42,3 +43,6 @@ Quick start up for a github development to aws production CI/CD enviroment of **
 
 ## Development Tools
 - [SDK Developer Dashboard](https://docs.constellationnetwork.io/sdk/elements/developer-dashboard)
+
+## Resources
+- [Constellation Docs](https://docs.constellationnetwork.io/sdk/)
