@@ -153,10 +153,24 @@
 - 📞 Calls 
     - [`loads_scripts`](https://github.com/ethaeral/metagraph-aws-github-deployment/blob/main/.references/euclid-development-environment/scripts/hydra#L3)
     - [`set_docker_compose`](https://github.com/ethaeral/metagraph-aws-github-deployment/blob/main/.references/euclid-development-environment/scripts/docker.sh#L3)
-    - ✔️ Checks 
-        - [`check_if_docker_is_running`](https://github.com/ethaeral/metagraph-aws-github-deployment/blob/main/.references/euclid-development-environment/scripts/docker.sh#L24)
-    - [`start_containers`](https://github.com/ethaeral/metagraph-aws-github-deployment/blob/main/.references/euclid-development-environment/scripts/docker.sh#L111)
+- ✔️ Checks 
+    - [`check_if_docker_is_running`](https://github.com/ethaeral/metagraph-aws-github-deployment/blob/main/.references/euclid-development-environment/scripts/docker.sh#L24)
+- 🧱 Set `SHOULD_RESET_GENESIS_FILE` and `FORCE_ROLLBACK`
+- 📞 Calls [`start_containers`](https://github.com/ethaeral/metagraph-aws-github-deployment/blob/main/.references/euclid-development-environment/scripts/docker.sh#L111)
 
 [`scripts/hydra stop`](https://github.com/ethaeral/metagraph-aws-github-deployment/blob/main/.references/euclid-development-environment/scripts/hydra#L252)
+- 📞 Calls 
+    - [`loads_scripts`](https://github.com/ethaeral/metagraph-aws-github-deployment/blob/main/.references/euclid-development-environment/scripts/hydra#L3)
+- 🧱 Set `SHOULD_RESET_GENESIS_FILE`, `FORCE_ROLLBACK`, `METAGRAPH_ID`
+- ✔️ Checks 
+    - [`check_if_docker_is_running`](https://github.com/ethaeral/metagraph-aws-github-deployment/blob/main/.references/euclid-development-environment/scripts/docker.sh#L24)
+- In this order checks if image in is in the docker containers if so will run
+    -       stop_container metagraph-l1-data "METAGRAPH-L1-DATA" 
+            stop_container metagraph-l1-currency "METAGRAPH-L1-CURRENCY"
+            stop_container metagraph-l0-genesis "METAGRAPH-L0-GENESIS"
+            stop_container metagraph-l0 "METAGRAP-L0-VALIDATORS"
+            stop_container dag-l1 "DAG-L1"
+            stop_container global-l0 "GLOBAL-L0"
+            stop_container monitoring "MONITORING"
 
 [`scripts/hydra destroy`](https://github.com/ethaeral/metagraph-aws-github-deployment/blob/main/.references/euclid-development-environment/scripts/hydra#L293)
