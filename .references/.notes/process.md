@@ -55,7 +55,8 @@
             -     dockercompose build --build-arg GIT_PERSONAL_ACCESS_TOKEN=$GITHUB_TOKEN --build-arg TESSELLATION_VERSION=$TESSELLATION_VERSION --no-cache 
                 -  or without `--no-cache`
 - 📞 Calls [`start_containers`](https://github.com/ethaeral/metagraph-aws-github-deployment/blob/main/.references/euclid-development-environment/scripts/docker.sh#L111)
-    - ✔️ Checks [`check_if_images_are_built`](https://github.com/ethaeral/metagraph-aws-github-deployment/blob/main/.references/euclid-development-environment/scripts/docker.sh#L83)
+    - ✔️ Checks 
+        - [`check_if_images_are_built`](https://github.com/ethaeral/metagraph-aws-github-deployment/blob/main/.references/euclid-development-environment/scripts/docker.sh#L83)
     - 🧱 Set docker container urls variables
     - 📞 Calls [`create_docker_custom_network`](https://github.com/ethaeral/metagraph-aws-github-deployment/blob/main/.references/euclid-development-environment/scripts/docker.sh#L32)
         - 🏃🏽‍♀️ Runs 
@@ -149,6 +150,12 @@
 
 
 [`scripts/hydra start_genesis`](https://github.com/ethaeral/metagraph-aws-github-deployment/blob/main/.references/euclid-development-environment/scripts/hydra#L209)
+- 📞 Calls 
+    - [`loads_scripts`](https://github.com/ethaeral/metagraph-aws-github-deployment/blob/main/.references/euclid-development-environment/scripts/hydra#L3)
+    - [`set_docker_compose`](https://github.com/ethaeral/metagraph-aws-github-deployment/blob/main/.references/euclid-development-environment/scripts/docker.sh#L3)
+    - ✔️ Checks 
+        - [`check_if_docker_is_running`](https://github.com/ethaeral/metagraph-aws-github-deployment/blob/main/.references/euclid-development-environment/scripts/docker.sh#L24)
+    - [`start_containers`](https://github.com/ethaeral/metagraph-aws-github-deployment/blob/main/.references/euclid-development-environment/scripts/docker.sh#L111)
 
 [`scripts/hydra stop`](https://github.com/ethaeral/metagraph-aws-github-deployment/blob/main/.references/euclid-development-environment/scripts/hydra#L252)
 
