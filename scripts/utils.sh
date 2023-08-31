@@ -67,6 +67,7 @@ function fill_github_token_from_env(){
                 echo_red "No GITHUB_TOKEN in .env"
                 exit 1
             else
+                check_if_github_token_is_valid
                 echo_white "Enviroment Variables Set"
             fi
         else
@@ -74,8 +75,8 @@ function fill_github_token_from_env(){
             exit 1
         fi
     else 
-        echo_white "Enviroment Variables Set"
         check_if_github_token_is_valid
+        echo_white "Enviroment Variables Set"
     fi
 }
 
