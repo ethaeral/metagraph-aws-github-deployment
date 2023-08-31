@@ -24,3 +24,21 @@ TODO:
 split scripts into dev:local and prod:aws  
 
 
+## 08.31.23
+Created bash script for GITHUB token env
+Still struggling with docker and AWS with this configuration
+
+Need to find where hydra composes up
+
+Video also talks about security
+https://youtu.be/RqTEHSBrYFw?si=8q6IcSGrsdIgcElt&t=10607
+
+https://www.composerize.com/
+
+scripts/docker.sh -> start_containers
+scripts/docker.sh -> create_docker_custom_network
+scripts/docker.sh -> run_container
+scripts/join-cluster.sh -> join
+
+TODO:
+Let hydra accept .env for DEV and PROD
