@@ -28,7 +28,6 @@ function fill_env_variables_from_json_config_file() {
     check_if_package_is_installed jq
     check_if_config_file_is_the_new_format
     
-    export GITHUB_TOKEN=$(jq -r .github_token euclid.json)
     export METAGRAPH_ID=$(jq -r .metagraph_id euclid.json)
     export TESSELLATION_VERSION=$(jq -r .tessellation_version euclid.json)
     export TEMPLATE_VERSION=$(jq -r .framework.version euclid.json)
@@ -53,6 +52,31 @@ function fill_env_variables_from_json_config_file() {
     export OUTPUT_YELLOW=$(tput setaf 3)
     export OUTPUT_CYAN=$(tput setaf 6)
     export OUTPUT_WHITE=$(tput setaf 7)
+
+    fill_github_token_from_env
+}
+
+# CUSTOM: Read from ENV so GITHUB_TOKEN doesn't need to be hard written
+function fill_github_token_from_env(){
+    if [[ ${GITHUB_TOKEN:-"unset"} == "unset" ]]; then
+        if [ -f .env ]; then
+            set -o allexport
+            source .env
+            set +o allexport
+            if [[ ${GITHUB_TOKEN:-"unset"} == "unset" ]]; then
+                echo_red "No GITHUB_TOKEN in .env"
+                exit 1
+            else
+                echo_white "Enviroment Variables Set"
+            fi
+        else
+            echo_red "No GITHUB_TOKEN found make .env or set server variables"
+            exit 1
+        fi
+    else 
+        echo_white "Enviroment Variables Set"
+        check_if_github_token_is_valid
+    fi
 }
 
 function check_if_github_token_is_valid() {
