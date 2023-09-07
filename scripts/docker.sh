@@ -108,7 +108,12 @@ function check_if_images_are_built(){
     fi
 }
 
+<<<<<<< HEAD
 function start_containers(){
+=======
+# Build containers
+function start_containers_dev(){
+>>>>>>> 88b7a41 (.git file deleted)
     check_if_images_are_built
     
     global_l0_url=""
@@ -227,6 +232,106 @@ function start_containers(){
     fi
 }
 
+<<<<<<< HEAD
+=======
+# Custom Prod Function To Test for Cloud Formation On Dev
+function start_containers_prod(){
+    check_if_images_are_built
+    
+    global_l0_url=""
+    dag_l1_1_url=""
+    dag_l1_2_url=""
+    dag_l1_3_url=""
+    metagraph_l0_1_url=""
+    metagraph_l0_2_url=""
+    metagraph_l0_3_url=""
+    metagraph_l1_currency_1_url=""
+    metagraph_l1_currency_2_url=""
+    metagraph_l1_currency_3_url=""
+    metagraph_l1_data_1_url=""
+    metagraph_l1_data_2_url=""
+    metagraph_l1_data_3_url=""
+    grafana_url=""
+    
+    create_docker_custom_network
+
+    cd ../infra/docker
+
+    if [[ " ${DOCKER_CONTAINERS[*]} " =~ "global-l0" ]] && \
+        [[ " ${DOCKER_CONTAINERS[*]} " =~ "dag-l1" ]] && \
+        [[ " ${DOCKER_CONTAINERS[*]} " =~ "metagraph-l0" ]] && \
+        [[ " ${DOCKER_CONTAINERS[*]} " =~ "metagraph-l1-currency" ]] && \
+        [[ " ${DOCKER_CONTAINERS[*]} " =~ "metagraph-l1-data" ]] && \ 
+        [[ " ${DOCKER_CONTAINERS[*]} " =~ "monitoring" ]]
+    then
+        $dockercompose up -d --no-recreate
+        sleep 100 && echo_white "100s has passed for Docker to start all containers"
+        get_metagraph_id_from_metagraph_l0_genesis
+        if [[ -z "$METAGRAPH_ID" ]]; then
+            echo_red "metagraph_id not found on euclid.json file, please fill this parameter or run metagraph-l0"
+            exit 1
+        fi
+            
+        join_dag_l1_nodes
+        join_metagraph_l0_nodes
+        join_metagraph_l1_currency_nodes
+        join_metagraph_l1_data_nodes
+
+        global_l0_url="http://localhost:9000/cluster/info"
+        dag_l1_1_url="http://localhost:9100/cluster/info"
+        dag_l1_2_url="http://localhost:9200/cluster/info"
+        dag_l1_3_url="http://localhost:9300/cluster/info"
+        metagraph_l0_1_url="http://localhost:9400/cluster/info"
+        metagraph_l0_2_url="http://localhost:9500/cluster/info"
+        metagraph_l0_3_url="http://localhost:9600/cluster/info"
+        metagraph_l1_currency_1_url="http://localhost:9700/cluster/info"
+        metagraph_l1_currency_2_url="http://localhost:9800/cluster/info"
+        metagraph_l1_currency_3_url="http://localhost:9900/cluster/info"
+        metagraph_l1_data_1_url="http://localhost:8000/cluster/info"
+        metagraph_l1_data_2_url="http://localhost:8100/cluster/info"
+        metagraph_l1_data_3_url="http://localhost:8200/cluster/info"
+        grafana_url="http://localhost:3000/"
+    else
+        echo_red "Build docker images by using /scripts/hydra build"
+        
+    fi
+    
+    echo
+    echo
+    echo_white "Containers successfully built."
+    echo_white "Urls:"
+    echo
+    if [[ ! -z "$global_l0_url" ]]; then
+        echo_url "Global L0:" $global_l0_url
+    fi
+    if [[ ! -z "$dag_l1_1_url" ]]; then
+        echo_url "DAG L1 - 1" $dag_l1_1_url
+        echo_url "DAG L1 - 2" $dag_l1_2_url
+        echo_url "DAG L1 - 3" $dag_l1_3_url
+    fi
+    if [[ ! -z "$metagraph_l0_1_url" ]]; then
+        echo_url "Metagraph L0 - 1:" $metagraph_l0_1_url
+        echo_url "Metagraph L0 - 2:" $metagraph_l0_2_url
+        echo_url "Metagraph L0 - 3:" $metagraph_l0_3_url
+    fi
+    if [[ ! -z "$metagraph_l1_currency_1_url" ]]; then
+        echo_url "Metagraph L1 Currency - 1:" $metagraph_l1_currency_1_url
+        echo_url "Metagraph L1 Currency - 2:" $metagraph_l1_currency_2_url
+        echo_url "Metagraph L1 Currency - 3:" $metagraph_l1_currency_3_url
+    fi
+    if [[ ! -z "$metagraph_l1_data_1_url" ]]; then
+        echo_url "Metagraph L1 Data - 1:" $metagraph_l1_data_1_url
+        echo_url "Metagraph L1 Data - 2:" $metagraph_l1_data_2_url
+        echo_url "Metagraph L1 Data - 3:" $metagraph_l1_data_3_url
+    fi
+    if [[ ! -z "$grafana_url" ]]; then
+        echo_url "Grafana:" $grafana_url
+    fi
+}
+
+
+
+>>>>>>> 88b7a41 (.git file deleted)
 function stop_container() {
     echo
     echo

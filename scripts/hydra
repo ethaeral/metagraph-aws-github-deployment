@@ -70,6 +70,8 @@ function build() {
   TESSELLATION_VERSION=$TESSELLATION_VERSION
   DOCKER_CONTAINERS=$DOCKER_CONTAINERS
 
+  # Building Docker Images
+
   if [[ -z "$(docker images -q ubuntu-with-java-and-sbt)" || ! -z "$argc_rebuild_tessellation" ]]; then
     echo
     echo
@@ -206,7 +208,7 @@ function build() {
 }
 
 # @cmd Start from genesis the containers
-function start_genesis() {
+function start_genesis(){
   load_scripts
 
   set_docker_compose
@@ -216,8 +218,14 @@ function start_genesis() {
 
   export SHOULD_RESET_GENESIS_FILE=true
   export FORCE_ROLLBACK=false
-  start_containers
+
+  if [[ ${ENV} == "dev" ]]; then
+    start_containers_dev
+  else 
+    start_containers_prod
+  fi
 }
+
 
 # @cmd Start from rollback the containers
 function start_rollback() {

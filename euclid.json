@@ -13,28 +13,25 @@
   "p12_files": {
     "genesis": {
       "file_name": "token-key.p12",
-      "alias": "token-key",
-      "password": "password"
+      "alias": "token-key"
     },
     "validators": [
       {
         "file_name": "token-key-1.p12",
-        "alias": "token-key-1",
-        "password": "password"
+        "alias": "token-key-1"
       },
       {
         "file_name": "token-key-2.p12",
-        "alias": "token-key-2",
-        "password": "password"
-      } 
+        "alias": "token-key-2"
+      }
     ]
   },
   "docker": {
     "default_containers": [
       "global-l0",
-      "metagraph-l0", 
-      "metagraph-l1-currency", 
-      "metagraph-l1-data", 
+      "metagraph-l0",
+      "metagraph-l1-currency",
+      "metagraph-l1-data",
       "monitoring"
     ]
   }

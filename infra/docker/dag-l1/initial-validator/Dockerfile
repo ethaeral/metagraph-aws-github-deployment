@@ -17,9 +17,10 @@ ENV CL_PASSWORD=${P12_FILE_PASSWORD_GENESIS}
 
 COPY p12-files/${P12_FILE_NAME_GENESIS} ${P12_FILE_NAME_GENESIS}
 
+
 RUN apt-get install wget -y && \
     echo "Getting dag-l1 jar ..." && \
-    wget -q https://github.com/Constellation-Labs/tessellation/releases/download/$TESSELLATION_VERSION/cl-dag-l1.jar  && \
+    wget -v https://github.com/Constellation-Labs/tessellation/releases/download/$TESSELLATION_VERSION/cl-dag-l1.jar  && \
     mv cl-dag-l1.jar dag-l1.jar && \
     echo "Getting cl-wallet jar ..." && \
     wget -q https://github.com/Constellation-Labs/tessellation/releases/download/$TESSELLATION_VERSION/cl-wallet.jar

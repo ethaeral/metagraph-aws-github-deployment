@@ -37,13 +37,10 @@ function fill_env_variables_from_json_config_file() {
     export FRAMEWORK_MODULES=$(jq -r .framework.modules euclid.json)
     export P12_GENESIS_FILE_NAME=$(jq -r .p12_files.genesis.file_name euclid.json)
     export P12_GENESIS_FILE_KEY_ALIAS=$(jq -r .p12_files.genesis.alias euclid.json)
-    export P12_GENESIS_FILE_PASSWORD=$(jq -r .p12_files.genesis.password euclid.json)
     export P12_NODE_2_FILE_NAME=$(jq -r .p12_files.validators[0].file_name euclid.json)
     export P12_NODE_2_FILE_KEY_ALIAS=$(jq -r .p12_files.validators[0].alias euclid.json)
-    export P12_NODE_2_FILE_PASSWORD=$(jq -r .p12_files.validators[0].password euclid.json)
     export P12_NODE_3_FILE_NAME=$(jq -r .p12_files.validators[1].file_name euclid.json)
     export P12_NODE_3_FILE_KEY_ALIAS=$(jq -r .p12_files.validators[1].alias euclid.json)
-    export P12_NODE_3_FILE_PASSWORD=$(jq -r .p12_files.validators[1].password euclid.json)
     export DOCKER_CONTAINERS=$(jq -r .docker.default_containers euclid.json)
     
     ## Colors
@@ -53,32 +50,87 @@ function fill_env_variables_from_json_config_file() {
     export OUTPUT_CYAN=$(tput setaf 6)
     export OUTPUT_WHITE=$(tput setaf 7)
 
-    fill_github_token_from_env
+    fill_variables_from_env
+
+    check_if_github_token_is_valid
+    check_if_env_is_valid
+    echo_white "Enviroment Variables Set"
+    echo
+    printf "Current Configurations: \n\
+    ENV: $ENV \n\
+    GITHUB_TOKEN: $GITHUB_TOKEN \n\
+    METAGRAPH_ID: $METAGRAPH_ID \n\
+    TESSELLATION_VERSION: $TESSELLATION_VERSION \n\
+    TEMPLATE_VERSION: $TEMPLATE_VERSION \n\
+    TEMPLATE_VERSION_IS_TAG_OR_BRANCH: $TEMPLATE_VERSION_IS_TAG_OR_BRANCH \n\
+    PROJECT_NAME: $PROJECT_NAME \n\
+    FRAMEWORK_NAME: $FRAMEWORK_NAME \n\
+    FRAMEWORK_MODULES: $FRAMEWORK_MODULES \n\
+    P12_GENESIS_FILE_NAME: $P12_GENESIS_FILE_NAME \n\
+    P12_GENESIS_FILE_KEY_ALIAS: $P12_GENESIS_FILE_KEY_ALIAS \n\
+    P12_GENESIS_FILE_PASSWORD: $P12_GENESIS_FILE_PASSWORD \n\
+    P12_NODE_2_FILE_NAME: $P12_NODE_2_FILE_NAME \n\
+    P12_NODE_2_FILE_KEY_ALIAS: $P12_NODE_2_FILE_KEY_ALIAS \n\
+    P12_NODE_2_FILE_PASSWORD: $P12_NODE_2_FILE_PASSWORD \n\
+    P12_NODE_3_FILE_NAME: $P12_NODE_3_FILE_NAME \n\
+    P12_NODE_3_FILE_KEY_ALIAS: $P12_NODE_3_FILE_KEY_ALIAS \n\
+    P12_NODE_3_FILE_PASSWORD: $P12_NODE_3_FILE_PASSWORD \n\
+    DOCKER_CONTAINERS: $DOCKER_CONTAINERS
+    "
 }
 
 # CUSTOM: Read from ENV so GITHUB_TOKEN doesn't need to be hard written
-function fill_github_token_from_env(){
-    if [[ ${GITHUB_TOKEN:-"unset"} == "unset" ]]; then
+function fill_variables_from_env(){
+    if [[ ${GITHUB_TOKEN:-"unset"} == "unset" \
+        || ${ENV:-"unset"} == "unset" \
+        || ${P12_GENESIS_FILE_PASSWORD:-"unset"} == "unset" \
+        || ${P12_NODE_2_FILE_PASSWORD:-"unset"} == "unset" \
+        || ${P12_NODE_3_FILE_PASSWORD:-"unset"} == "unset" ]]
+    then
         if [ -f .env ]; then
             set -o allexport
             source .env
             set +o allexport
+            variables=""
             if [[ ${GITHUB_TOKEN:-"unset"} == "unset" ]]; then
-                echo_red "No GITHUB_TOKEN in .env"
-                exit 1
+                variables+=" GITHUB_TOKEN"
+            fi
+            if [[ ${ENV:-"unset"} == "unset" ]]; then
+                variables+=" ENV"
             else
-                check_if_github_token_is_valid
-                echo_white "Enviroment Variables Set"
+               export ENV="$(tr [A-Z] [a-z] <<< "$ENV")"
+            fi
+            if [[ ${P12_GENESIS_FILE_PASSWORD:-"unset"} == "unset" ]]; then
+                variables+=" P12_GENESIS_FILE_PASSWORD"
+            fi
+            if [[ ${P12_NODE_2_FILE_PASSWORD:-"unset"} == "unset" ]]; then
+                variables+=" P12_NODE_2_FILE_PASSWORD"
+            fi
+            if [[ ${P12_NODE_3_FILE_PASSWORD:-"unset"} == "unset" ]]; then
+                variables+=" P12_NODE_3_FILE_PASSWORD"
+            fi
+            if [[ ${GITHUB_TOKEN:-"unset"} == "unset" || ${ENV:-"unset"} == "unset" ]]; then
+                echo_red "Following variables not found in the env:$variables"
+                exit 1
             fi
         else
-            echo_red "No GITHUB_TOKEN found make .env or set server variables"
+            echo_red "All variables not found. Make .env or server variables"
             exit 1
         fi
-    else 
-        check_if_github_token_is_valid
-        echo_white "Enviroment Variables Set"
     fi
 }
+
+function check_if_env_is_valid(){
+    case $ENV in
+        dev) echo_white "Development environment" ;;
+        prod) echo_white "Production environment" ;;
+        *)
+            echo_red "ENV only accepts "prod" and "dev" please change variables"
+            exit 1
+            ;;
+    esac
+}
+
 
 function check_if_github_token_is_valid() {
     if curl -s -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/user | grep -q "Bad credentials"; then
