@@ -108,12 +108,8 @@ function check_if_images_are_built(){
     fi
 }
 
-<<<<<<< HEAD
-function start_containers(){
-=======
 # Build containers
 function start_containers_dev(){
->>>>>>> 88b7a41 (.git file deleted)
     check_if_images_are_built
     
     global_l0_url=""
@@ -232,8 +228,6 @@ function start_containers_dev(){
     fi
 }
 
-<<<<<<< HEAD
-=======
 # Custom Prod Function To Test for Cloud Formation On Dev
 function start_containers_prod(){
     check_if_images_are_built
@@ -331,7 +325,6 @@ function start_containers_prod(){
 
 
 
->>>>>>> 88b7a41 (.git file deleted)
 function stop_container() {
     echo
     echo

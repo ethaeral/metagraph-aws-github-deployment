@@ -1,4 +1,6 @@
 # Project Notes / Draft Documentation
+## 09.07.23
+Figured out how to pass build into docker compose, trying to figure out how to run the dev smoothely
 
 ## 09.01.23
 finding how to run dockercompose in a diff dir

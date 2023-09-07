@@ -7,6 +7,9 @@ services:
     build:
       context: ../../../source
       dockerfile: ../infra/docker/dag-l1/initial-validator/Dockerfile
+      args:
+        GIT_PERSONAL_ACCESS_TOKEN: ${GITHUB_TOKEN}
+        TESSELLATION_VERSION: ${TESSELLATION_VERSION}
     image: dag-l1-initial-validator
     environment:
       - CL_PUBLIC_HTTP_PORT=9000
