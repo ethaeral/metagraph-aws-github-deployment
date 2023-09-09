@@ -1,4 +1,13 @@
 # Project Notes / Draft Documentation
+
+##  09.09.23
+Filled in all args for docker compose, will need to figure out time flow in docker compose
+
+Current issue is that services will start even though it depends on another, processes will not be able to connected if they're all not properly started
+
+## 09.08.23 
+Have to figure out the p12 files 
+
 ## 09.07.23
 Figured out how to pass build into docker compose, trying to figure out how to run the dev smoothely
 
