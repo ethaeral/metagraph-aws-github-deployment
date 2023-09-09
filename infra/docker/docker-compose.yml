@@ -5,6 +5,12 @@ services:
     build:
       context: ../../source
       dockerfile: ../infra/docker/global-l0/Dockerfile
+      args:
+        TESSELLATION_VERSION: ${TESSELLATION_VERSION}
+        GIT_PERSONAL_ACCESS_TOKEN: ${GITHUB_TOKEN}
+        P12_FILE_NAME: ${P12_GENESIS_FILE_NAME}
+        P12_FILE_KEY_ALIAS: ${P12_GENESIS_FILE_KEY_ALIAS}
+        P12_FILE_PASSWORD: ${P12_GENESIS_FILE_PASSWORD}
     image: global-l0
     environment:
       - CL_APP_ENV=dev
@@ -36,8 +42,11 @@ services:
       context: ../../source
       dockerfile: ../infra/docker/dag-l1/initial-validator/Dockerfile
       args:
-        GIT_PERSONAL_ACCESS_TOKEN: ${GITHUB_TOKEN}
         TESSELLATION_VERSION: ${TESSELLATION_VERSION}
+        GIT_PERSONAL_ACCESS_TOKEN: ${GITHUB_TOKEN}
+        P12_FILE_NAME_GENESIS: ${P12_GENESIS_FILE_NAME}
+        P12_FILE_KEY_ALIAS_GENESIS: ${P12_GENESIS_FILE_KEY_ALIAS}
+        P12_FILE_PASSWORD_GENESIS: ${P12_GENESIS_FILE_PASSWORD}
     depends_on:
       global-l0-1:
         condition: service_completed_successfully
@@ -75,10 +84,16 @@ services:
       dockerfile: ../infra/docker/dag-l1/node-2/Dockerfile
       args:
         GIT_PERSONAL_ACCESS_TOKEN: ${GITHUB_TOKEN}
+        P12_FILE_NAME_GENESIS: ${P12_GENESIS_FILE_NAME}
+        P12_FILE_NAME_NODE_2: ${P12_NODE_2_FILE_NAME}
+        P12_FILE_KEY_ALIAS_GENESIS: ${P12_GENESIS_FILE_KEY_ALIAS}
+        P12_FILE_KEY_ALIAS_NODE_2: ${P12_NODE_2_FILE_KEY_ALIAS}
+        P12_FILE_PASSWORD_GENESIS: ${P12_GENESIS_FILE_PASSWORD}
+        P12_FILE_PASSWORD_NODE_2: ${P12_NODE_2_FILE_PASSWORD}
     image: dag-l1-validator-node-2
     depends_on:
       dag-l1-1:
-        condition: service_healthy
+        condition: service_completed_successfully
     environment:
       - CL_PUBLIC_HTTP_PORT=9000
       - CL_P2P_HTTP_PORT=9001
@@ -125,10 +140,16 @@ services:
       dockerfile: ../infra/docker/dag-l1/node-3/Dockerfile
       args:
         GIT_PERSONAL_ACCESS_TOKEN: ${GITHUB_TOKEN}
+        P12_FILE_NAME_GENESIS: ${P12_GENESIS_FILE_NAME}
+        P12_FILE_NAME_NODE_3: ${P12_NODE_3_FILE_NAME}
+        P12_FILE_KEY_ALIAS_GENESIS: ${P12_GENESIS_FILE_KEY_ALIAS}
+        P12_FILE_KEY_ALIAS_NODE_3: ${P12_NODE_3_FILE_KEY_ALIAS}
+        P12_FILE_PASSWORD_GENESIS: ${P12_GENESIS_FILE_PASSWORD}
+        P12_FILE_PASSWORD_NODE_3: ${P12_NODE_3_FILE_PASSWORD}
     image: dag-l1-validator-node-3
     depends_on:
       dag-l1-1:
-        condition: service_healthy
+        condition: service_completed_successfully
     environment:
       - CL_PUBLIC_HTTP_PORT=9000
       - CL_P2P_HTTP_PORT=9001
@@ -163,34 +184,33 @@ services:
 
              cp jars/dag-l1.jar dag-l1.jar && \
              java -jar dag-l1.jar run-validator --ip 172.50.0.12"
-        echo_white "Joining DAG L1 containers to build the cluster ..."
-        for ((i = 1; i <= 11; i++)); do
-          if curl -v http://localhost:9100/cluster/info &>/dev/null && curl -v http://localhost:9200/metrics &>/dev/null && curl -v http://localhost:9300/metrics &>/dev/null; then
-            echo_white "Joining DAG L1 node 2 ..."
-            docker exec -it dag-l1-2 bash -c "cd genesis/ && \
-                                                                  export CL_KEYSTORE=\${CL_KEYSTORE_GENESIS} && \
-                                                                  export CL_KEYALIAS=\${CL_KEYALIAS_GENESIS} && \
-                                                                  export CL_PASSWORD=\${CL_PASSWORD_GENESIS} && \
-                                                                  export GENESIS_ID=\$(java -jar cl-wallet.jar show-id) && \
-                                                                  curl -v -X POST http://localhost:9002/cluster/join -H \"Content-type: application/json\" -d '{ \"id\":\"'\${GENESIS_ID}'\", \"ip\": \"172.50.0.10\", \"p2pPort\": 9001 }' &> /dev/null"
-            echo_green "DAG L1 node 2 joined"
+        echo "Joining DAG L1 containers to build the cluster ..."
+        if curl -v http://localhost:9100/cluster/info &>/dev/null && curl -v http://localhost:9200/metrics &>/dev/null && curl -v http://localhost:9300/metrics &>/dev/null; then
+          echo "Joining DAG L1 node 2 ..."
+          docker exec -it dag-l1-2 bash -c "cd genesis/ && \
+                                                                export CL_KEYSTORE=$${CL_KEYSTORE_GENESIS} && \
+                                                                export CL_KEYALIAS=$${CL_KEYALIAS_GENESIS} && \
+                                                                export CL_PASSWORD=$${CL_PASSWORD_GENESIS} && \
+                                                                export GENESIS_ID=$$(java -jar cl-wallet.jar show-id) && \
+                                                                curl -v -X POST http://localhost:9002/cluster/join -H \"Content-type: application/json\" -d '{ \"id\":\"'\${GENESIS_ID}'\", \"ip\": \"172.50.0.10\", \"p2pPort\": 9001 }' &> /dev/null"
+          echo "DAG L1 node 2 joined"
 
-            echo_white "Joining DAG L1 node 3 ..."
-            docker exec -it dag-l1-3 bash -c "cd genesis/ && \
-                                                      export CL_KEYSTORE=\${CL_KEYSTORE_GENESIS} && \
-                                                      export CL_KEYALIAS=\${CL_KEYALIAS_GENESIS} && \
-                                                      export CL_PASSWORD=\${CL_PASSWORD_GENESIS} && \
-                                                      export GENESIS_ID=\$(java -jar cl-wallet.jar show-id) && \
-                                                      curl -v -X POST http://localhost:9002/cluster/join -H \"Content-type: application/json\" -d '{ \"id\":\"'\${GENESIS_ID}'\", \"ip\": \"172.50.0.10\", \"p2pPort\": 9001 }' &> /dev/null"
+          echo "Joining DAG L1 node 3 ..."
+          docker exec -it dag-l1-3 bash -c "cd genesis/ && \
+                                                    export CL_KEYSTORE=$${CL_KEYSTORE_GENESIS} && \
+                                                    export CL_KEYALIAS=$${CL_KEYALIAS_GENESIS} && \
+                                                    export CL_PASSWORD=$${CL_PASSWORD_GENESIS} && \
+                                                    export GENESIS_ID=$$(java -jar cl-wallet.jar show-id) && \
+                                                    curl -v -X POST http://localhost:9002/cluster/join -H \"Content-type: application/json\" -d '{ \"id\":\"'\${GENESIS_ID}'\", \"ip\": \"172.50.0.10\", \"p2pPort\": 9001 }' &> /dev/null"
 
-            echo_white "DAG L1 node 3 joined"
-            echo_green "DAG L1 cluster built successfully"
-            break
-          else
-            echo_yellow "DAG L1 validators still booting... waiting 30s ($i/10)"
-            sleep 30
-          fi
-        done
+          echo "DAG L1 node 3 joined"
+          echo "DAG L1 cluster built successfully"
+          break
+        else
+          echo "DAG L1 validators still booting... waiting 30s ($i/10)"
+          sleep 30
+        fi
+      
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://dag-l1-3:9000/metrics" ]
       interval: 10s
